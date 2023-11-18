@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="AE2_CRISTIAN_CLIENTE">
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <property name="context-root" value="AE2_CRISTIAN_CLIENTE"/>
+        <property name="java-output-path" value="/AE2_CRISTIAN_CLIENTE/target/classes"/>
+    </wb-module>
+</project-modules>

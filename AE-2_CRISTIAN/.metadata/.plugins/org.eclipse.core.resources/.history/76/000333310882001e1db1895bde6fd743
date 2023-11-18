@@ -1,0 +1,73 @@
+package es.cristian.controlador;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import es.cristian.modelo.entidad.Libro;
+import es.cristian.modelo.persistencia.DaoLibro;
+
+@RestController
+public class ControladorLibro {
+	
+	/*
+	 * Se realiza una inyección del objeto DaoLibro, así se conectan
+	   ambos objetos para realizar las peticiones HTTP correspondientes.
+	 */
+	//
+	@AutoWired
+	public DaoLibro daoLibro;
+	
+	//get persona por Id
+	@GetMapping(path="libros/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Libro> getLibro(@PathVariable("id")int id) {
+		System.out.println("Buscando libro por id: " + id);
+		Libro l = daoLibro.get(id);
+		
+		if(l != null) {
+			return new ResponseEntity<Libro>(l,HttpStatus.OK);
+		}else {
+			return new ResponseEntity<Libro>(HttpStatus.NOT_FOUND); //404
+		}
+		
+	}
+	
+	//Dar de alta un libro
+	@PostMapping(path="libros", consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Libro> altaLibro(@RequestBody Libro l){
+		System.out.println("Alta del libro: objeto libro: " + l);
+		daoLibro.add(l);
+		return new ResponseEntity<Libro>(l, HttpStatus.CREATED); //201
+	}
+	
+	//Obtener toda la lista de libros
+	@GetMapping(path="libros", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Libro>> listarLibros(
+			@RequestParam(name="nombre", required=false)String nombre){
+		
+	
+			System.out.println("Listado de libros");
+			List<Libro> listaLibros= daoLibro.list();
+		return new ResponseEntity<List<Libro>>(listaLibros,HttpStatus.OK);
+		
+	}
+	
+	//CONTINUAR CON PUT Y DELETE
+	
+	
+	
+	
+	
+	
+	
+}

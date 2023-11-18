@@ -1,0 +1,13 @@
+package es.cristian.controlador;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import es.cristian.modelo.persistencia.DaoLibro;
+
+@RestController
+public class ControladorLibro {
+
+	@AutoWired
+	public DaoLibro daoLibro;
+	
+}

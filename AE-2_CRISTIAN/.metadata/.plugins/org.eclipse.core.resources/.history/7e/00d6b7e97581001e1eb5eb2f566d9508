@@ -1,0 +1,5 @@
+package es.cristian.modelo.persistencia;
+
+public class DaoLibro {
+
+}

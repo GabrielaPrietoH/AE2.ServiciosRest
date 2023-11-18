@@ -1,0 +1,5 @@
+package es.cristian.cliente.servicio;
+
+public class ServicioProxyLibro {
+
+}

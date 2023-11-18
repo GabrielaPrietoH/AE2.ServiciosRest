@@ -1,0 +1,64 @@
+package es.cristian.cliente;
+
+import java.util.Scanner;
+
+import org.apache.catalina.core.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+
+import es.cristian.cliente.entidad.Libro;
+import es.cristian.cliente.servicio.ServicioProxyLibro;
+
+@SpringBootApplication
+public class Ae2CristianClienteApplication implements CommandLineRunner{
+	
+	
+	@Autowired
+	private ServicioProxyLibro spl;
+	
+	@Autowired
+	private ApplicationContext context;
+	
+	@Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Cliente -> Cargando el contexto de Spring");
+
+		SpringApplication.run(Ae2CristianClienteApplication.class, args);
+	}
+
+		@Override
+		public void run(String... args) throws Exception {
+			
+			Scanner  sc = new Scanner(System.in);
+			
+			System.out.println("------------ Arrancando el cliente REST -------");
+			
+			System.out.println("------------ MENÚ -----------------------------");
+			
+			
+			//Dar de alta un libro
+			System.out.println("Alta de un nuevo libro: ");
+			Libro libro = new Libro();
+			System.out.println("Introduce el título del libro: ");
+			String titulo = sc.nextLine();
+			libro.setTitulo(titulo);
+			System.out.println();
+			
+			
+			//Dar de baja un libro por ID
+			//Modificar un libro por ID
+			//Obtener un libro por ID
+			//Listar todos los libros
+			//Salir
+		}
+
+}

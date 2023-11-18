@@ -1,0 +1,25 @@
+package es.cristian.controlador;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import es.cristian.modelo.persistencia.DaoLibro;
+
+@RestController
+public class ControladorLibro {
+	
+	/*
+	 * Se realiza una inyección del objeto DaoLibro, así se conectan
+	   ambos objetos para realizar las peticiones HTTP correspondientes.
+	 */
+	//
+	@AutoWired
+	public DaoLibro daoLibro;
+	
+	@GetMapping
+	
+	
+	
+	
+	
+}

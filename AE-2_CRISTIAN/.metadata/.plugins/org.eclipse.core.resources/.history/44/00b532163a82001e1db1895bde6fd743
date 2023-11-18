@@ -1,0 +1,13 @@
+package es.cristian.cliente;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Ae2CristianClienteApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Ae2CristianClienteApplication.class, args);
+	}
+
+}

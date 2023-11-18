@@ -1,0 +1,10 @@
+1700006480328	Rename package 'com.act2spring'
+1700006590669	Rename type 'SpringBootRestApplication'
+1700010375789	Rename resource 'controladorMensaje'
+1700010487003	Rename compilation unit 'controladorMensaje.java'
+1700015381655	Delete element
+1700061426376	Rename package 'servrest'
+1700085731934	Rename package 'serviciorest'
+1700085779461	Rename package 'serviciorest.controlador'
+1700085812858	Rename package 'serviciorest.modelo.entidad'
+1700085837819	Rename package 'serviciorest.modelo.persistencia'

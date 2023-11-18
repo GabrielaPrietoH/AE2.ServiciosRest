@@ -1,0 +1,175 @@
+package servidorrest.modelo.persistencia;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.aop.aspectj.AspectJMethodBeforeAdvice;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ser.std.StdArraySerializers.BooleanArraySerializer;
+
+import servidorrest.modelo.entidad.Libro;
+
+
+/**
+ * Patron DAO (Data Access Object), objeto que se encarga de hacer las consultas
+ * a algun motor de persistencia (BBDD, Ficheros, etc). En este caso vamos a 
+ * simular que los datos estan guardados en una BBDD trabajando con una lista
+ * de objetos cargada en memoria para simplificar el ejemplo.
+ * 
+ * Hay que tener en cuenta que para simplificar el ejemplo tambien se ha hecho
+ * que el ID con el que se dan de alta los libros en la lista coincide exactamente
+ * con la posicion del array que ocupan.
+ * 
+ * Mediante la anotacion @Component, damos de alta un unico objeto de esta clase
+ * dentro del contexto de Spring, su ID sera el nombre de la case en notacion
+ * lowerCamelCase
+ * 
+ */
+@Component
+public class DaoLibro {
+
+	public List<Libro> listaLibros;
+	public int contador;
+
+	/**
+	 * Cuando se cree el objeto dentro del contexto de Spring, se ejecutara
+	 * su constructor, que creara los libros y las metera en una lista
+	 * para que puedan ser consumidas por nuestros usuarios
+	 */
+	public DaoLibro() {
+		System.out.println("DaoLibro -> Creando la lista de libros!");
+		listaLibros = new ArrayList<Libro>();
+		Libro l1 = new Libro(contador++,"El corazón de la piedra", "Nocturna", "En la Europa de los siglos XVI");//ID: 0
+		Libro l2 = new Libro(contador++,"Salmos de vísperas", "Obra social de Caja de Avila", "Manuscrito musical");//ID: 1
+		Libro l3 = new Libro(contador++,"La música en las catedrales españolas del Siglo de Oro", "Alianza Música", "Biografia de Victoria");//ID: 2
+		Libro l4 = new Libro(contador++,"La polifonía clásica", "la ciudad de Dios", "Paleografia Musical");//ID:3
+		Libro l5 = new Libro(contador++,"El canto gregoriano", "Publicaciones Españolas", "Ocho modos eclesiasticos");//ID:4
+		listaLibros.add(l1);
+		listaLibros.add(l2);
+		listaLibros.add(l3);
+		listaLibros.add(l4);
+		listaLibros.add(l5);
+	}
+
+	/**
+	 * Devuelve un libro a partir de su ID
+	 * @param posicion la posicion del array que buscamos
+	 * @return El libro que ocupe en la posicion del array, null en caso de
+	 * que no exista o se haya ido fuera de rango del array
+	 */
+	public Libro get(int id) {
+		try {
+			for (Libro libro : listaLibros) {
+				if (libro.getId() == id)
+				{
+					// El ID existe, devuelve el libro
+					return libro;
+				}
+			}
+		} catch (IndexOutOfBoundsException iobe) {
+			System.out.println("Libro fuera de rango");
+		}
+		return null;
+	}
+
+	/**
+	 * Metodo que devuelve todos los libros del array
+	 * @return una lista con todos los libros del array
+	 */
+	public List<Libro> list() {
+		return listaLibros;
+	}
+
+	/**
+	 * Agrega un libro a la lista, utilizando el ID proporcionado por el usuario,
+	 * asegurándose de que el ID no esté repetido en la lista existente.
+	 * @param l El libro a agregar.
+	 * @param id El ID proporcionado por el usuario para el libro.
+	 * @return true si el libro se agrega correctamente, false si el ID ya existe en la lista.
+	 */
+	public boolean add(Libro l) {
+
+		for (Libro libro : listaLibros) {
+			if (libro.getId() == l.getId() || libro.getTitulo().equals(l.getTitulo()))
+			{
+				// Si el ID ya existe, devuelve false y no agrega el libro
+				return false;
+			}
+		}
+
+		// Si el ID no existe, se agrega el libro a la lista
+		listaLibros.add(l);
+		// Devuelve true para indicar que el libro se agregó correctamente
+		return true;
+
+	}
+	/**
+	 * Borramos un libro de una posicion del array
+	 * @param posicion la posicion a borrar
+	 * @return devolvemos el libro que hemos quitado del array, 
+	 * o null en caso de que no exista.
+	 */
+	public 	Boolean delete(int id) {
+		try {
+			for (Libro libro : listaLibros) {
+				if (libro.getId() == id)
+				{
+					// Si el ID existe, borro el libro
+					return listaLibros.remove(libro);
+				}
+			}
+
+		} catch (IndexOutOfBoundsException e) {
+			System.out.println("delete -> Libro fuera de rango");
+		}
+		return false;
+	}
+
+	/**
+	 * Metodo que modifica un libro de una posicion del array
+	 * @param l contiene todos los datos que queremos modificar, pero 
+	 * l.getId() contiene la posicion del array que queremos eliminar
+	 * @return el libro modificado en caso de que exista, null en caso
+	 * contrario
+	 */
+	public Libro update(Libro l) {
+		try {
+
+			for (Libro libro : listaLibros) {
+				if (libro.getId() == l.getId())
+				{
+					// Si el ID existe, actualizo el libro
+					libro.setTitulo(l.getTitulo());
+					libro.setEditorial(l.getEditorial());
+					libro.setNota(l.getNota());
+
+					return libro;
+				}
+			}
+
+		} catch (IndexOutOfBoundsException iobe) {
+			System.out.println("update -> Libro fuera de rango");
+		}
+		return null;
+	}
+
+	/**
+	 * Metodo que devuelve todos los libros por titulo. Como puede
+	 * haber varios libros con el mismo titulo tengo que
+	 * devolver una lista con todas las encontradas
+	 * @param titulo representa el titulo por el que vamos a hacer la
+	 * busqueda
+	 * @return una lista con los libros que coincidan en el titulo.
+	 * La lista estará vacia en caso de que no hay coincidencias
+	 */
+	public List<Libro> listByTitulo(String titulo){
+		List<Libro> listaLibrosAux = new ArrayList<Libro>();
+		for(Libro l : listaLibros) {
+			if(l.getTitulo().equalsIgnoreCase(titulo)) {//contains()
+				listaLibrosAux.add(l);
+			}
+		}
+		return listaLibrosAux;
+	}
+}

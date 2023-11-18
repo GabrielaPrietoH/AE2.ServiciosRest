@@ -1,0 +1,360 @@
+package serviciorest.cliente;
+
+import java.util.List;
+import java.util.Scanner;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+
+import serviciorest.cliente.entidad.Libro;
+import serviciorest.cliente.servicio.ServicioProxyLibro;
+import serviciorest.cliente.servicio.ServicioProxyMensaje;
+
+@SpringBootApplication
+public class Application implements CommandLineRunner {
+
+	// Primero inyectaremos todos los objetos que necesitamos para
+	// acceder a nuestro ServicioRest, el ServicioProxyPersona y el
+	// ServicioProxyMensaje
+
+	@Autowired
+	private ServicioProxyMensaje spm;
+
+	@Autowired
+	private ServicioProxyLibro spl;
+
+	// También necesitaremos acceder al contexto de Spring para parar
+	// la aplicación, ya que esta app al ser una aplicación web se
+	// lanzará en un Tomcat. De esta manera le decimos a Spring que
+	// nos inyecte su propio contexto.
+	@Autowired
+	private ApplicationContext context;
+
+	// En este método daremos de alta un objeto de tipo RestTemplate que será
+	// el objeto más importante de esta aplicación. Será usado por los
+	// objetos ServicioProxy para hacer las peticiones HTTP a nuestro
+	// servicio REST.
+	// Como no podemos anotar la clase RestTemplate para dar un objeto
+	// de este tipo, porque no la hemos creado nosotros, usaremos la anotación
+	// @Bean para decirle a Spring que cuando arranque la app ejecute este
+	// método y meta el objeto devuelto dentro del contexto de Spring con ID
+	// "restTemplate" (el nombre del método)
+	@Bean
+	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		return builder.build();
+	}
+
+	// Método main que lanza la aplicación
+	public static void main(String[] args) {
+		System.out.println("Cliente -> Cargando el contexto de Spring");
+		SpringApplication.run(Application.class, args);
+
+		// Nótese que como este método es estático no podemos acceder
+		// a los métodos dinámicos de la clase, como el "spp" o "spm"
+		// Para solucionar esto, haremos que nuestra clase implemente
+		// "CommandLineRunner" e implementaremos el método "run"
+		// Cuando se acabe de arrancar el contexto, se llamará automáticamente
+		// al método run
+	}
+
+	// Este método es dinámico por la tanto ya podemos acceder a los atributos
+	// dinámicos (spm y spp respectivamente)
+
+	public void menu() {
+		int opcion = 0;
+
+		do {
+			opcion = menuCrud();
+			switch (opcion) {
+			case 1:
+				darAltaLibro();
+				break;
+			case 2:
+				darBajaLibroxId();
+				break;
+			case 3:
+				modificarLibroxId();
+				break;
+			case 4:
+				obtenerLibroxId();
+				break;
+			case 5:
+				listarTodosLosLibros();
+				break;
+			}
+		} while (opcion != 6);
+		System.out.println("FIN DE PROGRAMA");
+
+	}// cierra void main
+
+	public static int menuCrud() {
+		Scanner leer = new Scanner(System.in);
+
+		int opcion = 0;
+
+		System.out.println("     ");
+		System.out.println("------------------------------------------------------------------");
+		System.out.println("**********MENU CRUD***********************************************");
+		System.out.println("------------------------------------------------------------------");
+		System.out.println("1. Dar de alta un libro");
+		System.out.println("2. Dar de baja un libro por ID");
+		System.out.println("3. Modificar un libro por ID");
+		System.out.println("4. Obtener un libro por ID");
+		System.out.println("5. Listar todos los libros");
+		System.out.println("6. Salir");
+		System.out.println("     ");
+		System.out.print("Introduce una opcion: ");
+		opcion = leer.nextInt();
+		while (opcion < 1 || opcion > 6) {
+			System.out.println("Introduce una opcion del 1 al 5, 6 para salir:");
+			opcion = leer.nextInt();
+		}
+
+		return opcion;
+
+	}// cierra primerMenu
+
+	public void darAltaLibro() {
+		Libro libro = new Libro();
+		Scanner leer = new Scanner(System.in);
+		String textoUsuario;
+		int idUsuario;
+		System.out.println("------------------------------------------------------------------");
+		System.out.println("*********** ALTA LIBRO *******************************************");
+		System.out.println("------------------------------------------------------------------");
+		while (true) {
+			System.out.print("Introduce Título:");
+			textoUsuario = leer.nextLine();
+			if (!textoUsuario.isEmpty()) {
+				libro.setTitulo(textoUsuario);
+				break;
+			} else {
+				System.out.println("El título no puede estar vacío. Por favor, inténtalo de nuevo.");
+			}
+		}
+
+		while (true) {
+			System.out.print("Introduce Editorial:");
+			textoUsuario = leer.nextLine();
+			if (!textoUsuario.isEmpty()) {
+				libro.setEditorial(textoUsuario);
+				break;
+			} else {
+				System.out.println("La editorial no puede estar vacía. Por favor, inténtalo de nuevo.");
+			}
+		}
+
+		while (true) {
+			System.out.print("Introduce Nota:");
+			textoUsuario = leer.nextLine();
+			if (!textoUsuario.isEmpty()) {
+				libro.setNota(textoUsuario);
+				break;
+			} else {
+				System.out.println("La nota no puede estar vacía. Por favor, inténtalo de nuevo.");
+			}
+		}
+
+		while (true) {
+			try {
+				System.out.print("Introduce un ID:");
+				idUsuario = leer.nextInt();
+				libro.setId(idUsuario);
+				break;
+			} catch (NumberFormatException e) {
+				System.out.println("El ID debe ser un número entero. Inténtalo de nuevo.");
+			}
+		}
+
+		Libro lAlta = spl.alta(libro);
+		System.out.println("run -> Libro dado de alta " + lAlta);
+	}
+
+	public void darBajaLibroxId() {
+		Scanner scanner = new Scanner(System.in);
+		
+		System.out.println("------------------------------------------------------------------");
+		System.out.println("*********** BAJA LIBRO *******************************************");
+		System.out.println("------------------------------------------------------------------");
+
+		// Solicitar al usuario el ID del libro a dar de baja
+		System.out.print("Ingrese el ID del libro a dar de baja: ");
+		int idLibro = scanner.nextInt();
+
+		// Llamar al método para dar de baja el libro con el ID ingresado
+		boolean borrada = spl.borrar(idLibro);
+
+		// Mostrar el resultado
+		System.out.println("Libro con ID " + idLibro + " borrado: " + borrada);
+	}
+
+	public void modificarLibroxId() {
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("------------------------------------------------------------------");
+		System.out.println("*********** MODIFICAR LIBRO **************************************");
+		System.out.println("------------------------------------------------------------------");
+		// Solicitar al usuario el ID del libro a modificar
+		System.out.print("Ingrese el ID del libro a modificar: ");
+		int idLibro = scanner.nextInt();
+
+		// Buscar el libro por su ID
+		Libro libroAModificar = spl.obtener(idLibro);
+
+		if (libroAModificar != null) {
+			// Mostrar la información actual del libro
+			System.out.println("Información actual del libro:");
+			System.out.println(libroAModificar);
+
+			// Solicitar al usuario los cambios deseados
+			System.out.println("Ingrese los nuevos datos del libro:");
+
+			System.out.print("Nuevo título: ");
+			String nuevoTitulo = scanner.nextLine(); // Consumir la línea en blanco pendiente
+			nuevoTitulo = scanner.nextLine(); // Leer el nuevo título
+
+			System.out.print("Nueva editorial: ");
+			String nuevaEditorial = scanner.nextLine();
+
+			System.out.print("Nueva nota: ");
+			String nuevaNota = scanner.nextLine();
+
+			// Aplicar los cambios al libro
+			libroAModificar.setTitulo(nuevoTitulo);
+			libroAModificar.setEditorial(nuevaEditorial);
+			libroAModificar.setNota(nuevaNota);
+
+			// Llamar al método para modificar el libro en el sistema
+			boolean modificada = spl.modificar(libroAModificar);
+			System.out.println("¿Libro modificado? " + (modificada ? "Sí" : "No"));
+		} else {
+			System.out.println("El libro con ID " + idLibro + " no fue encontrado.");
+		}
+	}
+
+	public void obtenerLibroxId() {
+		Scanner scanner = new Scanner(System.in);
+
+		System.out.println("------------------------------------------------------------------");
+		System.out.println("*********** OBTENER LIBRO ****************************************");
+		System.out.println("------------------------------------------------------------------");
+		System.out.print("Ingrese el ID del libro a obtener: ");
+		int idLibro = scanner.nextInt();
+
+		// Verificar si el libro existe en el sistema
+		Libro libroObtenido = spl.obtener(idLibro);
+
+		if (libroObtenido != null) {
+			System.out.println("Información del libro con ID " + idLibro + ":");
+			System.out.println(libroObtenido);
+		} else {
+			System.out.println("El libro con ID " + idLibro + " no fue encontrado.");
+		}
+	}
+
+	public void listarTodosLosLibros() {
+		
+		System.out.println("------------------------------------------------------------------");
+		System.out.println("*********** LISTAR LIBROS ****************************************");
+		System.out.println("------------------------------------------------------------------");
+		
+		List<Libro> listaLibros = spl.listar(null);
+
+		// Usando un bucle for-each para imprimir cada libro en la lista
+		for (Libro libro : listaLibros) {
+			System.out.println(libro);
+		}
+	}
+
+	public void run(String... args) throws Exception {
+
+		menu();
+
+		/*
+		 * 
+		 * System.out.println("****** Arrancando el cliente REST ******");
+		 * System.out.println("*************  MENSAJE *****************"); String
+		 * mensaje = spm.obtener("mensaje"); System.out.println("run -> Mensaje: " +
+		 * mensaje);
+		 * 
+		 * System.out.println("***********  MENSAJE HTML **************"); String
+		 * mensajeHTML = spm.obtener("mensajeHTML");
+		 * System.out.println("run -> Mensaje: " + mensajeHTML);
+		 * 
+		 * System.out.println("*********** ALTA LIBRO***************"); Libro libro =
+		 * new Libro(); libro.setTitulo("La catedral del mar");
+		 * libro.setEditorial("Fuji"); libro.setNota("Barcelona edad media");
+		 * 
+		 * Libro lAlta = spl.alta(libro);
+		 * System.out.println("run -> Libro dado de alta " + lAlta);
+		 * 
+		 * System.out.println("************ GET LIBRO ***************"); libro =
+		 * spl.obtener(lAlta.getId()); System.out.println("run -> Libro con id 5: " +
+		 * libro);
+		 * 
+		 * System.out.println("************ GET LIBRO ERRONEA ***************"); libro =
+		 * spl.obtener(20); System.out.println("run -> Libro con id 20: " + libro);
+		 * 
+		 * System.out.println("********* MODIFICAR LIBRO *************"); Libro
+		 * lModificar = new Libro(); lModificar.setId(lAlta.getId());
+		 * lModificar.setTitulo("Los Pilares de la tierra");
+		 * lModificar.setEditorial("Planeta de libros");
+		 * lModificar.setNota("Las catedrales de Kindsbridge"); boolean modificada =
+		 * spl.modificar(lModificar); System.out.println("run -> Libro modificado? " +
+		 * modificada);
+		 * 
+		 * System.out.println("********* MODIFICAR LIBRO ERRONEA*************");
+		 * lModificar.setTitulo("Forastera"); lModificar.setEditorial("Libros Madrid");
+		 * lModificar.setId(20); modificada = spl.modificar(lModificar);
+		 * System.out.println("run -> Libro modificado? " + modificada);
+		 * 
+		 * System.out.println("********** BORRAR LIBROS **************"); boolean
+		 * borrada = spl.borrar(lAlta.getId());
+		 * System.out.println("run -> Libro con id 5 borrado? " + borrada);
+		 * 
+		 * System.out.println("******** BORRAR LIBROS ERRONEO *******"); borrada =
+		 * spl.borrar(20); System.out.println("run -> Libro con id 20 borrado? " +
+		 * borrada);
+		 * 
+		 * System.out.println("********** LISTAR LIBROS ***************"); List<Libro>
+		 * listaLibros = spl.listar(null); //Recorremos la lista y la imprimimos con
+		 * funciones lambda //Tambien podríamos haber usado un for-each clásico de java
+		 * 
+		 * listaLibros.forEach((v) -> System.out.println(v));
+		 * 
+		 * 
+		 * System.out.println("******* LISTAR LIBROS POR TITULO *******"); listaLibros =
+		 * spl.listar(""); //listaLibros.forEach((v) -> System.out.println(v));
+		 * 
+		 * System.out.println("******************************************");
+		 * System.out.println("******** Parando el cliente REST *********"); //Mandamos
+		 * parar nuestra aplicación Spring Boot pararAplicacion();
+		 */
+	}
+
+	public void pararAplicacion() {
+		// Esta aplicacion levanta un servidor web, por lo que tenemos que dar
+		// la orden de pararlo cuando acabemos. Para ello usamos el método exit,
+		// de la clase SpringApplication, que necesita tanto el contexto de
+		// Spring como un objeto que implemente la interfaz ExitCodeGenerator.
+		// Podemos usar la función lambda "() -> 0" para simplificar
+
+		SpringApplication.exit(context, () -> 0);
+
+		// Podemos hacerlo también de una manera clásica, es decir, creando
+		// la clase anónima a partir de la interfaz.
+		// El código de abajo sería equivalente al de arriba
+		// (pero mucho más largo)
+		/*
+		 * SpringApplication.exit(context, new ExitCodeGenerator() {
+		 * 
+		 * @Override public int getExitCode() { return 0; } });
+		 */
+	}
+}

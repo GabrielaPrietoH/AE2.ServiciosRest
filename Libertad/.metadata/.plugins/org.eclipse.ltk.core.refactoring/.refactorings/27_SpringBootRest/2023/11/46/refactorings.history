@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;ServletInitializer.java&apos; to &apos;SpringBootRest/src/main/java/serviciorest&apos;&#x0D;&#x0A;- Original project: &apos;27_SpringBootRest&apos;&#x0D;&#x0A;- Destination element: &apos;SpringBootRest/src/main/java/serviciorest&apos;&#x0D;&#x0A;- Original element: &apos;serviciorest.ServletInitializer.java&apos;" description="Copy compilation unit" destination="=SpringBootRest/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;serviciorest" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;serviciorest{ServletInitializer.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1700060588486" units="1" version="1.0"/>
+</session>

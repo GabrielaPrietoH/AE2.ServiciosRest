@@ -43,19 +43,17 @@ public class DaoLibro {
 		return listaLibros;
 	}
 
-	public void add(Libro l) {
+	public boolean add(Libro l) {
 		
 		for (Libro libro : listaLibros) {
-			if (libro.getId() == l.getId() || libro.getTitulo().equals(l.getTitulo())) {
+			if ( libro.getTitulo().equals(l.getTitulo())) {
 				// Si el ID o el título ya existen, devuelve false y no agrega el libro
-				System.out.println("El libro ya esta dado de alta");
+				return false;
 			}
-		}
-
-		// Si el ID y el título no existen, se agrega el libro a la lista
+	  }
 		l.setId(contador++);
 		listaLibros.add(l);
-		
+		return true; 
 	}
 		
 

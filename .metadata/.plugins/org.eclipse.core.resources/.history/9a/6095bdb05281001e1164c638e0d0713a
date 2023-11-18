@@ -1,0 +1,5 @@
+package servicio.rest.controlador;
+
+public class ControladorMensaje {
+
+}

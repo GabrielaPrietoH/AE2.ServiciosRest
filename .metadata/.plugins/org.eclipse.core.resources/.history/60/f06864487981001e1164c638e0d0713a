@@ -1,0 +1,60 @@
+package servicio.rest.cliente.servicio;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+import servicio.rest.cliente.entidad.Libro;
+
+@Service
+public class ServicioProxyLibro {
+
+	public static final String URL = "http://localhost:8080/libros/";
+	
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	public Libro obtener(int id) {
+		try {
+			ResponseEntity<Libro> re = restTemplate.getForEntity(URL + id, Libro.class);
+			HttpStatus hs =  (HttpStatus) re.getStatusCode();
+			if(hs == HttpStatus.OK) {
+				
+				return re.getBody();
+			} else {
+				System.out.println("Obtener -> Respuesta no contemplada");
+				return null;	
+			}
+		} catch (HttpClientErrorException e) {
+			System.out.println("obtener -> La persona NO se ha encontrado, id: " + id);
+		    System.out.println("obtener -> Codigo de respuesta: " + e.getStatusCode());
+		    return null;
+		}
+
+		public Libro alta(Libro l){
+			try {
+	
+				ResponseEntity<Libro> re = restTemplate.postForEntity(URL, l, Libro.class);
+				System.out.println("alta -> Codigo de respuesta " + re.getStatusCode());
+				return re.getBody();
+			} catch (HttpClientErrorException e) {//Errores 4XX
+				System.out.println("alta -> El libro NO se ha dado de alta, id: " + l);
+			    System.out.println("alta -> Codigo de respuesta: " + e.getStatusCode());
+			    return null;
+			}
+		
+		
+	}
+	
+	
+	public static void main(String[] args) {
+	
+
+	}
+
+}

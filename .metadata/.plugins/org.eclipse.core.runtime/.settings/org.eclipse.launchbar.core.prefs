@@ -1,0 +1,12 @@
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
+LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=win32
+configDescList=org.eclipse.launchbar.core.descriptorType.default\:ApplicationLibros,org.eclipse.launchbar.core.descriptorType.default\:AE2.ServicioRest1 - ApplicationLibros,org.eclipse.launchbar.core.descriptorType.default\:AE2.ServicioRest1 - Application,org.eclipse.launchbar.core.descriptorType.default\:Application,org.eclipse.launchbar.core.descriptorType.default\:Application (1),org.eclipse.launchbar.core.descriptorType.default\:Application (2),org.eclipse.launchbar.core.descriptorType.default\:Application (3)
+eclipse.preferences.version=1
+org.eclipse.launchbar.core.descriptorType.default\:AE2.ServicioRest1\ -\ Application/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:AE2.ServicioRest1\ -\ Application/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local
+org.eclipse.launchbar.core.descriptorType.default\:Application\ (1)/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:Application\ (2)/activeLaunchMode=debug
+org.eclipse.launchbar.core.descriptorType.default\:Application\ (3)/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:Application/activeLaunchMode=run
+org.eclipse.launchbar.core.descriptorType.default\:Application/activeLaunchTarget=org.eclipse.launchbar.core.launchTargetType.local\:Local

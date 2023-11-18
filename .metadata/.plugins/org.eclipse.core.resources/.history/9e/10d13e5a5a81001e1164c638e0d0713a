@@ -1,0 +1,33 @@
+package servicio.rest.modelo.persistencia;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import servicio.rest.modelo.entidad.Libro;
+
+@Component
+public class DaoLibro {
+	
+	public List<Libro> listaLibros;
+	public int contador;
+	
+	public DaoLibro() {
+		System.out.println("DaoPersona -> Creando la lista de Libros!");
+		listaLibros = new ArrayList<Libro>();
+		Libro l1 = new Libro(contador++, "Holly", "Plaza Janés", 9.6);
+		Libro l2 = new Libro(contador++, "El Problema Final", "Alfaguara", 9.0);
+		Libro l3 = new Libro(contador++, "El Cuco de Cristal", "Suma", 9.6);
+		Libro l4 = new Libro(contador++, "La Paciente Silenciosa", "Debols!llo", 9.2);
+		Libro l5 = new Libro(contador++, "Reina Roja", "B", 9.8);
+		
+		listaLibros.add(l1);
+		listaLibros.add(l2);
+		listaLibros.add(l3);
+		listaLibros.add(l4);
+		listaLibros.add(l5);
+		
+	}
+
+}

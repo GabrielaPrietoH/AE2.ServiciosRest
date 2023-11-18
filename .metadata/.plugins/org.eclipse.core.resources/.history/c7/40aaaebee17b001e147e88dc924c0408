@@ -1,0 +1,13 @@
+package serveiciorest.controlador;
+
+//El objeto creado a partir de esta clase servira como punto de entrada de 
+//nuestro servicio REST
+//Para dar de alta dicho objeto utilizaremos la anotacion @RestController
+
+//Los metodos anotados seran "endpoints" (puntos de entrada a nuestra aplicacion).
+//Estos metodos tendran que ser publicos y estar correctamente anotados
+
+public class ControladorLibros {
+	
+	
+}

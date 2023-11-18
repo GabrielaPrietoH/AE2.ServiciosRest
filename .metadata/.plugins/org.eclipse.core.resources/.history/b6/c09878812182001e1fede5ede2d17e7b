@@ -1,0 +1,112 @@
+package servicio.rest.cliente.servicio;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+import servicio.rest.cliente.entidad.Libro;
+
+@Service
+public class ServicioProxyLibro {
+
+	public static final String URL = "http://localhost:8080/libros/";
+	
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	// http://localhost:8080/personas/1 GET
+	public Libro obtener(int id) {
+		try {
+			ResponseEntity<Libro> re = restTemplate.getForEntity(URL + id, Libro.class);
+			HttpStatusCode hs = re.getStatusCode();
+			if(hs == HttpStatus.OK) {
+				
+				return re.getBody();
+			} else {
+				System.out.println("Obtener -> Respuesta no contemplada");
+				return null;	
+			}
+		} catch (HttpClientErrorException e) {
+			System.out.println("obtener -> El Libro NO se ha encontrado, id: " + id);
+		    System.out.println("obtener -> Codigo de respuesta: " + e.getStatusCode());
+		    return null;
+		}
+	}
+		public Libro alta(Libro l){
+			//Para hacer un post de una entidad usamos el metodo postForEntity
+			//El primer parametro la URL
+			//El segundo parametros el libro que ira en body
+			//El tercer parametro el objeto que esperamos que nos envie el servidor
+			try {
+				ResponseEntity<Libro> r = restTemplate.postForEntity(URL + l.getId(), l, Libro.class);
+				System.out.println("alta -> Codigo de respuesta " + r.getStatusCode());
+				return r.getBody();
+			} catch (HttpClientErrorException e) {//Errores 4XX
+				System.out.println("alta -> El libro NO se ha dado de alta, id: " + l);
+			    System.out.println("alta -> Codigo de respuesta: " + e.getStatusCode());
+			    return null;
+			}
+		}
+			public boolean modificar(Libro l){
+				//Para hacer un post de una entidad usamos el metodo postForEntity
+				//El primer parametro la URL
+				//El segundo parametros la persona que ira en body
+				//El tercer parametro el objeto que esperamos que nos envie el servidor
+				try {
+					
+					restTemplate.put(URL + l.getId(), l, Libro.class);
+					return true;
+				} catch (HttpClientErrorException e) {
+					System.out.println("modificar -> El Libro NO se ha modificado, id: " + l.getId());
+				    System.out.println("modificar -> Codigo de respuesta: " + e.getStatusCode());
+				    return false;
+				}
+				
+			}
+			
+			public boolean borrar(int id){
+				//El metodo delete tampoco devuelve nada, por lo que si no 
+				//ha podido borrar el id, daría un excepcion
+				// http://localhost:8080/personas/1 DELETE
+				   try {
+					
+						//Ej http://localhost:8080/personas/1 DELETE
+						restTemplate.delete(URL + id);
+						return true;
+					} catch (HttpClientErrorException e) {
+						System.out.println("borrar -> El Libro NO se ha borrado, id: " + id);
+					    System.out.println("borrar -> Codigo de respuesta: " + e.getStatusCode());
+					    return false;
+					}			
+	}
+			
+			public List<Libro> listar(String titulo){
+				String queryParams = "";		
+				if(titulo != null) {
+					queryParams += "?titulo=" + titulo;
+				  }
+				try {
+					// http://localhost:8080/libros?titulo=harry GET
+					ResponseEntity<Libro[]> response =
+							  restTemplate.getForEntity(URL + queryParams,Libro[].class);
+					Libro[] arrayLibros = response.getBody();
+					return Arrays.asList(arrayLibros);//convertimos el array en un ArrayList
+					
+				} catch (HttpClientErrorException e) {
+					System.out.println("listar -> Error al obtener la lista de libros");
+				    System.out.println("listar -> Codigo de respuesta: " + e.getStatusCode());
+				    return null;
+				}
+			
+			}
+
+
+}

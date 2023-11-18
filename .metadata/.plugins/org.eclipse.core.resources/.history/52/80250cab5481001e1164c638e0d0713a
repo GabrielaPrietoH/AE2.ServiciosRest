@@ -1,0 +1,5 @@
+package servicio.rest.modelo.entidad;
+
+public class Libro {
+
+}

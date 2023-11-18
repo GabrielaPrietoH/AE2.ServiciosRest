@@ -107,6 +107,6 @@ public class ServicioProxyLibro {
 	
 	
 	
-	//Método para Salir
+	
 	
 }
